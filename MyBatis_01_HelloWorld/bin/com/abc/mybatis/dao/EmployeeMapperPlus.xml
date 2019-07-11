@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- public Employee getEmpById(Integer id); -->
+<mapper namespace="com.abc.mybatis.dao.EmployeeMapperPlus">
+	<resultMap type="com.abc.mybatis.bean.Employee" id="MyEmp">
+		<id column="id" property="id"/>
+		<result column="last_name" property="lastName"/>
+	</resultMap>
+	<resultMap type="com.abc.mybatis.bean.Employee" id="MyEmpPlus">
+		<id column="id" property="id"/>
+		<result column="last_name" property="lastName"/>
+		<result column="gender" property="gender"/>
+		<result column="did" property="dept.id"/>
+		<result column="dept_name" property="dept.departmentName"/>
+	</resultMap>
+	
+	<resultMap type="com.abc.mybatis.bean.Employee" id="MyEmpPlus2">
+		<id column="id" property="id"/>
+		<result column="last_name" property="lastName"/>
+		<result column="gender" property="gender"/>
+		<association property="dept" javaType="com.abc.mybatis.bean.Department">
+			<id column="did" property="id"/>
+			<result column="dept_name" property="departmentName"/>
+		</association>	
+	</resultMap>
+	
+	<resultMap type="com.abc.mybatis.bean.Employee" id="MyEmpPlus3">
+		<id column="id" property="id"/>
+		<result column="last_name" property="lastName"/>
+		<result column="gender" property="gender"/>
+		<result column="email" property="email"/>
+		<association property="dept" 
+		select="com.abc.mybatis.dao.DepartmentMapper.getDeptById"
+		column="d_id">
+		</association>	
+	</resultMap>
+	
+	<resultMap type="com.abc.mybatis.bean.Employee" id="MyEmpPlus4">
+		<id column="id" property="id"/>
+		<result column="last_name" property="lastName"  />
+		<result column="gender" property="gender"/>
+		<result column="email" property="email"/>
+		<discriminator javaType="string" column="gender">
+			<case value="0" resultType="com.abc.mybatis.bean.Employee">
+				<association property="dept" 
+					select="com.abc.mybatis.dao.DepartmentMapper.getDeptById"
+					column="d_id">
+				</association>				
+			</case>
+			<case value="1" resultType="com.abc.mybatis.bean.Employee">
+				<result column="last_name" property="email"/>
+			</case>
+		</discriminator>
+	</resultMap>			
+		
+	<select id="getEmpById"  resultMap="MyEmp">
+		select * from tbl_employee where id=#{id}
+	</select>
+	
+	<select id="getEmpAndDept" resultMap="MyEmpPlus2">
+		SELECT e.id id, e.last_name last_name, e.gender gender, e.d_id d_id,
+		d.id did, d.dept_name dept_name
+		FROM tbl_employee e, tbl_dept d
+		WHERE e.d_id=d.id AND e.id = #{id}
+	</select>
+	
+	<select id="getEmpByIdStep" resultMap="MyEmpPlus4">
+		select * from tbl_employee where id= #{id}
+	</select>
+	
+	<select id="getEmpByDeptId" resultType="emp">
+		select * from tbl_employee where d_id=#{deptId}
+	</select>
+</mapper>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.abc.mybatis.dao.EmployeeMapperDynamic">
+	<select id="getEmpsByConditionIf" resultType="emp">
+		select * from tbl_employee
+		<where>
+			<if test="id!=null">
+				id=#{id}
+			</if>
+			<if test="lastName!=null and lastName!=&quot;&quot;">
+				and last_name like #{lastName}
+			</if>
+			<if test="email!=null and email.trim()!=&quot;&quot;">
+				and email = #{email}
+			</if>
+			<if test="gender==0 or gender==1">
+				and gender = #{gender}
+			</if>		
+		</where>
+
+	</select>
+	
+	<select id="getEmpsByConditionTrim" resultType="emp">
+		select * from tbl_employee
+		<trim prefix="where" suffixOverrides="and">
+			<if test="id!=null">
+				id=#{id} and 
+			</if>
+			<if test="lastName!=null and lastName!=&quot;&quot;">
+				last_name like #{lastName} and 
+			</if>
+			<if test="email!=null and email.trim()!=&quot;&quot;">
+				email = #{email} and 
+			</if>
+			<if test="gender==0 or gender==1">
+				gender = #{gender}
+			</if>	
+		</trim>		
+	</select>
+	
+	<select id="getEmpsByConditionChoose" resultType="emp">
+	<bind name="_lastName" value="'%'+lastName+'%'"/>
+		select * from tbl_employee 
+		<where>
+			<choose>
+				<when test="id!=null">
+					id=#{id}
+				</when>
+				<when test="lastName!=null and lastName!=&quot;&quot;">
+					last_name like #{_lastName}
+				</when>
+				<when test="email!=null and email.trim()!=&quot;&quot;">
+					email = #{email}
+				</when>
+				<otherwise>
+					gender=0
+				</otherwise>
+			</choose>	
+		</where>
+	</select>
+	
+	<update id="updateEmp">
+		update tbl_employee
+		<set>
+			<if test="lastName!=null and lastName!=&quot;&quot;">
+				last_name=#{lastName},
+			</if>
+			<if test="email!=null and email.trim()!=&quot;&quot;">
+				email=#{email},
+			</if>
+		</set>
+		<where>
+			id=#{id}
+		</where>
+	</update>
+	
+	<select id="getEmpsByConditionForeach" resultType="emp"> 
+		select * from tbl_employee where id in
+		<foreach  collection="list" item="item_id" separator="," open="(" close=")">
+			#{item_id}
+		</foreach>
+	</select>	
+	
+	<insert id="addEmps">
+		insert into tbl_employee(<include refid="insertColumn"></include>)
+		values
+			<foreach collection="emps" item="emp" separator=",">
+				(#{emp.lastName},#{emp.email},#{emp.gender},#{emp.dept.id})
+			</foreach>
+	</insert>
+	
+	<sql id="insertColumn">
+		last_name,email,gender,d_id
+	</sql>
+</mapper>
