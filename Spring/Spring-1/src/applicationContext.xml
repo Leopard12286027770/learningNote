@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.0.xsd">
+
+    <bean id="helloWorld" class="com.abc.spring.bean.HelloWorld">
+    	<property name="name" value="Spring"></property>
+    </bean>
+    
+    <bean id="car2" class="com.abc.spring.bean.Car">
+    	<property name="brand" value="BMW"></property>
+    	<property name="speed" value="240"></property>
+    </bean>
+	
+	<bean id="person" class="com.abc.spring.bean.Person">
+		<property name="name7" value="Tom"></property>
+		<property name="age" value="24"></property>
+		<property name="car" ref="car2"></property>
+		<property name="car.speed" value="100"></property>
+	</bean>
+	
+	<bean id="person3" class="com.abc.spring.bean.collections.Person">
+		<property name="name" value="Jack"></property>
+		<property name="age" value="27"></property>
+		<property name="cars">
+			<list>
+				<ref bean="car2"/>
+				<ref bean="car2"/>
+				<ref bean="car2"/>
+				<ref bean="car2"/>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="newPerson" class="com.abc.spring.bean.collections.NewPerson">
+		<property name="name" value="Hec"></property>
+		<property name="age" value="80"></property>	
+		<property name="cars">
+			<map>
+				<entry key="AA" value-ref="car2"></entry>
+				<entry key="BB" value-ref="car2"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="dataSource" class="com.abc.spring.bean.collections.DataSource">
+		<property name="properties">
+			<props>
+				<prop key="user">root</prop>
+				<prop key="password">123456</prop>
+				<prop key="jdbcUrl">jdbc:mysql:///test</prop>
+				<prop key="driverClass">com.mysql.jdbc.Driver</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<util:list id="cars">
+		<ref bean="car2"/>
+		<ref bean="car2"/>
+	</util:list>
+	
+	<bean id="person4" class="com.abc.spring.bean.collections.Person">
+		<property name="name" value="Lorry"></property>
+		<property name="age" value="88"></property>
+		<property name="cars" ref="cars"></property>
+	</bean>	
+	
+	<bean id="person5" class="com.abc.spring.bean.collections.Person" p:age="30"
+	p:name="Perry" p:cars-ref="cars"
+	></bean>	
+</beans>
